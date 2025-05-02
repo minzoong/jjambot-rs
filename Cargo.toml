@@ -1,0 +1,17 @@
+[package]
+name = "jjambot"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4.31"
+lazy_static = "1.4.0"
+reqwest = "0.11.22"
+runtime-tokio = "0.0.0"
+serde = { version = "1.0.193", features = ["derive"] }
+serde_json = "1.0.108"
+sqlx = { version = "0.7.3", features = ["sqlite", "runtime-tokio"] }
+teloxide = { version = "0.12.2", features = ["macros"] }
+tokio = { version = "1.35.0", features = ["full"] }
