@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Build Docker image
+        run: docker-compose build
+      
+      - name: Run Docker container
+        env:
+          TELOXIDE_TOKEN: ${{ secrets.TELOXIDE_TOKEN }}
+          JJAM_TOKEN: ${{ secrets.JJAM_TOKEN }}
+          UNIT_CODE: ${{ secrets.UNIT_CODE }}
+        run: |
+          echo "TELOXIDE_TOKEN=${TELOXIDE_TOKEN}" > .env
+          echo "JJAM_TOKEN=${JJAM_TOKEN}" >> .env
+          echo "UNIT_CODE=${UNIT_CODE}" >> .env
+          
+          # docker-compose로 실행
+          docker-compose up -d
+      
+      - name: Wait for container to start
+        run: sleep 30
+      
+      - name: Check if process is running
+        run: |
+          CONTAINER_ID=$(docker-compose ps -q jjambot)
+          if [ -z "$CONTAINER_ID" ]; then
+            echo "Container is not running"
+            docker-compose logs
+            exit 1
+          fi
+          
+          # 컨테이너 내에서 jjambot 프로세스 확인
+          docker exec $CONTAINER_ID pgrep -f "jjambot" || { 
+            echo "jjambot process not found in container"; 
+            docker-compose logs;
+            exit 1; 
+          }
+          
+          echo "jjambot process is running successfully"
+      
+      - name: Cleanup
+        if: always()
+        run: docker-compose down
+

@@ -6,13 +6,13 @@ services:
       - "38888:80"
     environment:
       # Telegram 토큰
-      TELOXIDE_TOKEN:
+      TELOXIDE_TOKEN: ${TELOXIDE_TOKEN}
 
       # 국방부 API 토큰 
-      JJAM_TOKEN:
+      JJAM_TOKEN: ${JJAM_TOKEN}
 
       # 부대 코드
-      UNIT_CODE:
+      UNIT_CODE: ${UNIT_CODE}
       
     volumes:
       - ./data:/usr/src/myapp/data:jjamdata
